@@ -1,0 +1,28 @@
+{
+  "_comment": "Generic fable-prep config. Copy to config.json and edit. Empty arrays trigger auto-detect via lib/detect.sh.",
+  "frontier_model": "claude-fable-5",
+  "plan_model": "claude-opus-4-8",
+  "bulk_model": "claude-sonnet-4-6",
+  "mode": "auto",
+  "availability_sentinel": "~/.claude/.fable-live",
+  "mission_path": "./fable-queue/",
+  "sweep_surface": [],
+  "audit_tools": [],
+  "scoring": {
+    "weights": { "qual": 0.5, "value": 0.3, "risk": 0.2 },
+    "drop_below_qualify": 0.15,
+    "_note": "qual = round-collapse (entry ticket). If a cheaper model one-shots it too, qual ~ 0 -> dropped to a normal board card, not the frontier queue."
+  },
+  "hard_constraints": [
+    "never edit trading/order/execution/broker/killswitch paths",
+    "archive never delete (move to _archive/, never rm)",
+    "branch policy main-only unless repo has .sigma/dev-flow",
+    "every done carries its machine_check output (verify never assert)",
+    "design/copy/marketing packets run on the frontier model directly, never re-delegated"
+  ],
+  "quality_gates": {
+    "per_task_tier1": ["banned_marker_scan", "targeted_tests_touched_files"],
+    "per_wave_tier2": ["anti_slop", "ui_validation", "devils_advocate", "gap_analysis_2_clean_rounds", "qa_verification", "cross_model_review", "greptile_score"],
+    "wave_boundary": "pause_with_pass_miss_report"
+  }
+}
