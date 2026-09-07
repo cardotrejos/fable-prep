@@ -15,13 +15,12 @@ model returns, you fire one loop and it **straight-executes with zero planning t
 ## One loop, two modes
 
 ```
-detect frontier availability
- ├─ UNAVAILABLE → PLAN-MODE    diagnose repos → adversarially verify → rank → write a wave queue
- └─ LIVE        → EXECUTE-MODE  next wave → run packets → tiered gates → pause for your nod
+prepare or invoke without execution scope -> diagnose selected repos -> verify -> rank -> write queue
+execute selected authorized packets -> select available executor -> run -> verify
+status -> show queue and next wave without execution
 ```
 
-It flips automatically on a sentinel file. No frontier access yet? It plans. Frontier live?
-It ships. Same command either way.
+Preparation is the default even when the frontier model is live. A sentinel indicates capability; it does not grant execution authority. Honor explicit wave checkpoints and otherwise continue through the waves already authorized by the user.
 
 ## What makes the queue worth more than a TODO list
 
@@ -33,23 +32,22 @@ It ships. Same command either way.
 - **Execution-ready packets.** Concrete files, exact operation, an acceptance criterion, and a
   `machine_check` shell oracle that *proves* done. No re-planning on expensive time.
 - **Findings are adversarially verified** before they enter the queue — no phantom work.
-- **Safety rails built in.** Never touches money/trading paths, archives instead of deleting,
-  respects your branch policy, gates every commit, pauses at each wave boundary.
+- **Scope stays explicit.** Never touches the prohibited trading paths, preserves unrelated work, follows repository branch rules, and honors requested checkpoints. Destructive operations, external writes, and spending need authorization for their concrete target and action.
 
 ## Install
 
 ```bash
 git clone https://github.com/Dallionking/fable-prep ~/.claude/skills/fable-prep
 cp ~/.claude/skills/fable-prep/config.example.json ~/.claude/skills/fable-prep/config.json
-bash ~/.claude/skills/fable-prep/lib/detect.sh --init   # auto-discovers your repos + audit tools
+bash ~/.claude/skills/fable-prep/lib/detect.sh --init   # discovers candidates under the current directory; use --roots for selected roots
 ```
 
 ## Use
 
 ```
-/fable-prep            # detect mode and go
-/fable-prep plan       # force diagnosis → refresh the queue
-/fable-prep execute    # force execution (needs the live sentinel)
+/fable-prep            # prepare within the current project
+/fable-prep plan       # refresh the queue within the requested scope
+/fable-prep execute    # execute only selected authorized repositories and packets
 /fable-prep status     # show the queue summary + next wave
 ```
 

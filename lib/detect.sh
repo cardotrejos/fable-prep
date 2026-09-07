@@ -7,7 +7,7 @@ set -euo pipefail
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLAUDE_DIR="${CLAUDE_HOME:-$HOME/.claude}"
 INIT=0
-ROOTS_RAW="${PWD}:$HOME/SSS Projects:$HOME/projects:$HOME/code:$HOME/dev"
+ROOTS_RAW="${PWD}"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -53,9 +53,9 @@ done
 # --- 3. frontier availability ---
 echo; echo "### frontier availability"
 if [ -f "$CLAUDE_DIR/.fable-live" ] && grep -q live "$CLAUDE_DIR/.fable-live" 2>/dev/null; then
-  echo "- LIVE (sentinel present) -> EXECUTE-MODE"
+  echo "- LIVE (sentinel present); capability only, execution requires explicit task authorization"
 else
-  echo "- not live (no sentinel) -> PLAN-MODE"
+  echo "- not live (no sentinel); preparation remains available"
 fi
 
 # --- 4. optional starter config ---
@@ -63,7 +63,7 @@ if [ "$INIT" = "1" ] && [ ! -f "$SKILL_DIR/config.json" ]; then
   echo; echo "### writing starter config.json"
   {
     printf '{\n  "frontier_model": "claude-fable-5",\n  "plan_model": "claude-opus-4-8",\n'
-    printf '  "mode": "auto",\n  "availability_sentinel": "%s/.fable-live",\n' "$CLAUDE_DIR"
+    printf '  "mode": "plan",\n  "availability_sentinel": "%s/.fable-live",\n' "$CLAUDE_DIR"
     printf '  "mission_path": "./fable-queue/",\n  "sweep_surface": [\n'
     for i in "${!repos[@]}"; do
       sep=","; [ "$i" -eq $(( ${#repos[@]} - 1 )) ] && sep=""
